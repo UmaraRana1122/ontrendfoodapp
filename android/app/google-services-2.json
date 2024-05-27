@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "454808759354",
+    "project_id": "ontrendapp-d672f",
+    "storage_bucket": "ontrendapp-d672f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:454808759354:android:3fd90f5ebb07878a601903",
+        "android_client_info": {
+          "package_name": "com.ontrend.ontrendfoodapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZwwP7h0DRHjBGj9GT9VXuqkRIPpAmrhY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

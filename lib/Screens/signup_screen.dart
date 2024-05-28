@@ -1,12 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ontrendfoodapp/Screens/forget_password.dart';
-import 'package:ontrendfoodapp/Screens/home_screen.dart';
 import 'package:ontrendfoodapp/Utils/main_color.dart';
-import 'package:ontrendfoodapp/Widgets/button_widget.dart';
+import 'package:ontrendfoodapp/Utils/utils.dart';
+import 'package:ontrendfoodapp/Widgets/round_button.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -17,18 +15,38 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  bool loading = false;
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   bool _isObscure = true;
   FirebaseAuth _auth = FirebaseAuth.instance;
-
   @override
   void dispose() {
     super.dispose();
     emailController.dispose();
     passwordController.dispose();
+  }
+
+  void SignUp() {
+    setState(() {
+      loading = true;
+    });
+    _auth
+        .createUserWithEmailAndPassword(
+            email: emailController.text.toString(),
+            password: passwordController.text.toString())
+        .then((value) {
+      setState(() {
+        loading = false;
+      });
+    }).onError((stackTrace, error) {
+      Utils().toastMessage(error.toString());
+      setState(() {
+        loading = false;
+      });
+    });
   }
 
   @override
@@ -98,14 +116,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: TextFormField(
                             controller: emailController,
                             validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please enter your email";
-                              } else if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value)) {
-                                return "Please enter a valid email";
+                              if (value!.isEmpty) {
+                                return "Please enter your email or phone number";
+                              } else {
+                                return null;
                               }
-                              return null;
                             },
-                            keyboardType: TextInputType.emailAddress,
+                            keyboardType: TextInputType.text,
                             style: const TextStyle(
                               fontSize: 16,
                               fontStyle: FontStyle.normal,
@@ -114,7 +131,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               fontFamily: "QuicksandMedium",
                             ),
                             decoration: InputDecoration(
-                              hintText: 'Email',
+                              hintText: 'Email or Phone',
                               hintStyle: TextStyle(
                                 fontSize: 16,
                                 fontStyle: FontStyle.normal,
@@ -180,10 +197,11 @@ class _SignupScreenState extends State<SignupScreen> {
                             controller: passwordController,
                             obscureText: _isObscure,
                             validator: (value) {
-                              if (value == null || value.isEmpty) {
+                              if (value!.isEmpty) {
                                 return "Please enter a password";
+                              } else {
+                                return null;
                               }
-                              return null;
                             },
                             keyboardType: TextInputType.text,
                             style: const TextStyle(
@@ -259,56 +277,17 @@ class _SignupScreenState extends State<SignupScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 1.5.h),
-                  Container(
-                      alignment: Alignment.centerRight,
-                      child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ForgetPassword()));
-                            FocusScope.of(context).unfocus();
-                          },
-                          child: Text("Forgot Password?",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff677ea2))))),
                   SizedBox(
                     height: 5.h,
                   ),
-               InkWell(
-                    onTap: () {
-                      if (_formKey.currentState!.validate()) {
-                        _auth
-                            .createUserWithEmailAndPassword(
-                          email: emailController.text.trim(),
-                          password: passwordController.text.trim(),
-                        )
-                            .then((userCredential) {
-                          // Signup successful, navigate to the next screen
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomeScreen()),
-                          );
-                        }).catchError((error) {
-                          // Handle signup errors here
-                          print("Signup Error: $error");
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Signup failed: $error"),
-                              duration: Duration(seconds: 3),
-                            ),
-                          );
-                        });
-                      }
-                    },
-                    child: buttonWidget(7, 85, "Sign Up"),
-                  ),
-
+                  RoundButton(
+                      title: 'Sign Up',
+                      loading: loading,
+                      onTap: () {
+                        if (_formKey.currentState!.validate()) {
+                          SignUp();
+                        }
+                      }),
                   SizedBox(
                     height: 1.h,
                   ),
@@ -345,4 +324,3 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 }
-

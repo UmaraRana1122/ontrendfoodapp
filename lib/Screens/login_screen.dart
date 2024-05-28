@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,7 +6,9 @@ import 'package:ontrendfoodapp/Screens/forget_password.dart';
 import 'package:ontrendfoodapp/Screens/home_screen.dart';
 import 'package:ontrendfoodapp/Screens/signup_screen.dart';
 import 'package:ontrendfoodapp/Utils/main_color.dart';
+import 'package:ontrendfoodapp/Utils/utils.dart';
 import 'package:ontrendfoodapp/Widgets/button_widget.dart';
+import 'package:ontrendfoodapp/Widgets/round_button.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -19,13 +22,38 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
+  final _auth = FirebaseAuth.instance;
   bool _isObscure = true;
+  bool loading = false;
   @override
   void dispose() {
     super.dispose();
     emailController.dispose();
     passwordController.dispose();
+  }
+
+  void login() {
+    setState(() {
+      loading = true;
+    });
+    _auth
+        .signInWithEmailAndPassword(
+            email: emailController.text,
+            password: passwordController.text.toString())
+        .then((value) {
+      Utils().toastMessage(value.user!.email.toString());
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomeScreen()));
+      setState(() {
+        loading = false;
+      });
+    }).onError((error, stackTrace) {
+      debugPrint(error.toString());
+      Utils().toastMessage(error.toString());
+      setState(() {
+        loading = false;
+      });
+    });
   }
 
   @override
@@ -90,14 +118,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: TextFormField(
                           controller: emailController,
                           validator: (value) {
-                            if (value!.isEmpty ||
-                                !(RegExp(r'^[a-zA-Z0-9]+$')).hasMatch(value)) {
-                              return "Please enter a valid email";
+                            if (value!.isEmpty) {
+                              return "Please enter your email or phone number";
                             } else {
                               return null;
                             }
                           },
-                         
                           keyboardType: TextInputType.text,
                           style: const TextStyle(
                             fontSize: 16,
@@ -273,11 +299,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   height: 5.h,
                 ),
-                InkWell(
+                RoundButton(
+                    title: 'Log In',
+                    loading: loading,
                     onTap: () {
-                      if (_formKey.currentState!.validate()) {}
-                    },
-                    child: buttonWidget(7, 85, "Login")),
+                      if (_formKey.currentState!.validate()) {
+                        login();
+                      }
+                    }),
                 SizedBox(
                   height: 1.h,
                 ),
@@ -291,9 +320,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: 14.sp),
                     ),
                   ),
-                  InkWell(onTap: () {
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=>SignupScreen()));
-                  },
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SignupScreen()));
+                    },
                     child: Text('Register here',
                         style: TextStyle(
                             fontSize: 13,

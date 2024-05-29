@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ontrendfoodapp/Providers/product_provider.dart';
-import 'package:ontrendfoodapp/Screens/login_screen.dart';
+import 'package:ontrendfoodapp/Screens/auth/login_screen.dart';
 import 'package:ontrendfoodapp/Screens/splash_screen.dart';
 import 'package:ontrendfoodapp/Utils/main_color.dart';
 import 'package:ontrendfoodapp/Widgets/bottom_navigation_bar.dart';

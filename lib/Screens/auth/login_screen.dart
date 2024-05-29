@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ontrendfoodapp/Posts/post_screen.dart';
+import 'package:ontrendfoodapp/Screens/auth/login_with_mobile.dart';
+import 'package:ontrendfoodapp/Screens/auth/signup_screen.dart';
 import 'package:ontrendfoodapp/Screens/forget_password.dart';
-import 'package:ontrendfoodapp/Screens/home_screen.dart';
-import 'package:ontrendfoodapp/Screens/signup_screen.dart';
 import 'package:ontrendfoodapp/Utils/main_color.dart';
 import 'package:ontrendfoodapp/Utils/utils.dart';
 import 'package:ontrendfoodapp/Widgets/button_widget.dart';
@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
         .then((value) {
       Utils().toastMessage(value.user!.email.toString());
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomeScreen()));
+          context, MaterialPageRoute(builder: (context) => PostScreen()));
       setState(() {
         loading = false;
       });
@@ -334,6 +334,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: Color(0xff677ea2))),
                   ),
                 ]),
+                SizedBox(
+                  height: 2.h,
+                ),
+                InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginWithPhoneNumber()));
+                    },
+                    child: buttonWidget(5, 95, "Login with Phone"))
               ],
             ),
           ),

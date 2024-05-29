@@ -11,22 +11,14 @@ Widget buttonWidget(
     height: height.h,
     width: width.w,
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(12),
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Color(0xfffe5900),
-          Color(0xfffd5900),
-        ],
-      ),
-    ),
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: Colors.black)),
     child: Center(
       child: Text(
         text,
         style: GoogleFonts.quicksand(
           textStyle: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontWeight: FontWeight.w600,
             fontSize: 17.sp,
           ),

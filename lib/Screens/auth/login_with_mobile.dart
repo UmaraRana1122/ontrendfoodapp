@@ -44,7 +44,7 @@ class _LoginWithPhoneNumberState extends State<LoginWithPhoneNumber> {
               ),
               child: TextFormField(
                 controller: phoneNumberController,
-                keyboardType: TextInputType.text,
+                keyboardType: TextInputType.number,
                 style: const TextStyle(
                   fontSize: 16,
                   fontStyle: FontStyle.normal,
@@ -107,18 +107,40 @@ class _LoginWithPhoneNumberState extends State<LoginWithPhoneNumber> {
             ),
             RoundButton(
                 title: "Login",
+                loading: loading,
                 onTap: () {
+                  setState(() {
+                    loading = true;
+                  });
                   auth.verifyPhoneNumber(
                       phoneNumber: phoneNumberController.text,
-                      verificationCompleted: (_) {},
+                      verificationCompleted: (_) {
+                        setState(() {
+                          loading = false;
+                        });
+                      },
                       verificationFailed: (e) {
+                        setState(() {
+                          loading = false;
+                        });
                         Utils().toastMessage(e.toString());
                       },
                       codeSent: (String verificationId, int? token) {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>VerifyCodeScreen(verificationId: verificationId,)));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => VerifyCodeScreen(
+                                      verificationId: verificationId,
+                                    )));
+                        setState(() {
+                          loading = false;
+                        });
                       },
                       codeAutoRetrievalTimeout: (e) {
                         Utils().toastMessage(e.toString());
+                        setState(() {
+                          loading = false;
+                        });
                       });
                 })
           ],
